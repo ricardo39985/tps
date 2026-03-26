@@ -55,7 +55,8 @@ const elements = {
     adminAddItemBtn: document.getElementById("admin_add_item_btn"),
     adminStaffName: document.getElementById("admin_staff_name"),
     adminAddStaffBtn: document.getElementById("admin_add_staff_btn"),
-    loadingSpinner: document.getElementById("loading_spinner")
+    loadingSpinner: document.getElementById("loading_spinner"),
+    adminOpenBtn: document.getElementById("admin_open_btn"),
 };
 
 function showSpinner() {
@@ -86,20 +87,20 @@ async function postAction(payload) {
 }
 
 async function reloadCoreData() {
-  await Promise.all([
-    loadItems(),
-    loadStaff(),
-    loadDashboard(),
-    loadTransactions()
-  ]);
+    await Promise.all([
+        loadItems(),
+        loadStaff(),
+        loadDashboard(),
+        loadTransactions()
+    ]);
 
-  elements.itemsCount.textContent = String(items.length);
+    elements.itemsCount.textContent = String(items.length);
 
-  refreshItemViews();
-  renderCartUI();
-  renderStaffOptions();
-  renderDashboardSummary();
-  refreshAdminViews();
+    refreshItemViews();
+    renderCartUI();
+    renderStaffOptions();
+    renderDashboardSummary();
+    refreshAdminViews();
 }
 async function loadTransactions() {
     const result = await jsonpRequest("getTransactions");
@@ -311,25 +312,25 @@ function jsonpRequest(action) {
     });
 }
 async function loadItems() {
-  const result = await jsonpRequest("getItems");
-  if (!result.success) throw new Error(result.error || "Failed to load items.");
+    const result = await jsonpRequest("getItems");
+    if (!result.success) throw new Error(result.error || "Failed to load items.");
 
-  items = (result.items || []).map((item, index) => ({
-    _rowNumber: Number(item._rowNumber),
-    item_code: item.item_code,
-    item_name: item.item_name,
-    description: item.description,
-    unit_price: Number(item.unit_price || 0),
-    accent: [
-      "from-cyan-500/25 to-sky-500/10",
-      "from-blue-500/25 to-indigo-500/10",
-      "from-amber-500/25 to-orange-500/10",
-      "from-emerald-500/25 to-teal-500/10",
-      "from-fuchsia-500/25 to-violet-500/10"
-    ][index % 5]
-  }));
+    items = (result.items || []).map((item, index) => ({
+        _rowNumber: Number(item._rowNumber),
+        item_code: item.item_code,
+        item_name: item.item_name,
+        description: item.description,
+        unit_price: Number(item.unit_price || 0),
+        accent: [
+            "from-cyan-500/25 to-sky-500/10",
+            "from-blue-500/25 to-indigo-500/10",
+            "from-amber-500/25 to-orange-500/10",
+            "from-emerald-500/25 to-teal-500/10",
+            "from-fuchsia-500/25 to-violet-500/10"
+        ][index % 5]
+    }));
 
-  filteredItems = [...items];
+    filteredItems = [...items];
 }
 
 async function loadStaff() {
@@ -673,7 +674,7 @@ function animateTotalChange() {
 }
 
 function filterItems() {
-  refreshItemViews();
+    refreshItemViews();
 }
 
 function setStatus(message, tone = "neutral") {
@@ -841,64 +842,64 @@ function renderStaffOptions() {
     });
 }
 async function addItem() {
-  const item_code = elements.adminItemCode.value.trim();
-  const item_name = elements.adminItemName.value.trim();
-  const description = elements.adminItemDescription.value.trim();
-  const unit_price = Number(elements.adminItemPrice.value || 0);
+    const item_code = elements.adminItemCode.value.trim();
+    const item_name = elements.adminItemName.value.trim();
+    const description = elements.adminItemDescription.value.trim();
+    const unit_price = Number(elements.adminItemPrice.value || 0);
 
-  if (!item_code || !item_name || !unit_price) {
-    setStatus("Admin: item code, item name, and price are required.", "error");
-    return;
-  }
+    if (!item_code || !item_name || !unit_price) {
+        setStatus("Admin: item code, item name, and price are required.", "error");
+        return;
+    }
 
-  const optimisticItem = {
-    _rowNumber: Date.now(),
-    item_code,
-    item_name,
-    description,
-    unit_price,
-    accent: "from-cyan-500/25 to-sky-500/10"
-  };
+    const optimisticItem = {
+        _rowNumber: Date.now(),
+        item_code,
+        item_name,
+        description,
+        unit_price,
+        accent: "from-cyan-500/25 to-sky-500/10"
+    };
 
-  items = [optimisticItem, ...items];
-  elements.itemsCount.textContent = String(items.length);
-  refreshItemViews();
+    items = [optimisticItem, ...items];
+    elements.itemsCount.textContent = String(items.length);
+    refreshItemViews();
 
-  elements.adminItemCode.value = "";
-  elements.adminItemName.value = "";
-  elements.adminItemDescription.value = "";
-  elements.adminItemPrice.value = "";
+    elements.adminItemCode.value = "";
+    elements.adminItemName.value = "";
+    elements.adminItemDescription.value = "";
+    elements.adminItemPrice.value = "";
 
-  await postAction({
-    action: "createItem",
-    item_code,
-    item_name,
-    description,
-    unit_price: unit_price.toFixed(2)
-  });
+    await postAction({
+        action: "createItem",
+        item_code,
+        item_name,
+        description,
+        unit_price: unit_price.toFixed(2)
+    });
 
-  await syncAfterWrite("Item added.");
+    await syncAfterWrite("Item added.");
 }
 
 
 async function deleteItem(rowNumber) {
-  rowNumber = Number(rowNumber);
+    rowNumber = Number(rowNumber);
 
-  if (!rowNumber) {
-    setStatus("Delete failed: invalid item row.", "error");
-    return;
-  }
+    if (!rowNumber) {
+        setStatus("Delete failed: invalid item row.", "error");
+        return;
+    }
 
-  items = items.filter((item) => Number(item._rowNumber) !== rowNumber);
-  elements.itemsCount.textContent = String(items.length);
-  refreshItemViews();
+    items = items.filter((item) => Number(item._rowNumber) !== rowNumber);
+    elements.itemsCount.textContent = String(items.length);
+    refreshItemViews();
 
-  await postAction({
-    action: "deleteItem",
-    rowNumber
-  });
+    await postAction({
+        action: "deleteItem",
+        rowNumber
+    });
 
-  await syncAfterWrite("Item deleted.");
+    await syncAfterWrite("Item deleted.");
 }
 async function deleteItem(rowNumber) {
     console.log("delete item rowNumber", rowNumber);
@@ -975,20 +976,20 @@ async function deleteTransaction(rowNumber) {
     await syncAfterWrite("Transaction deleted.");
 }
 function refreshItemViews() {
-  const query = (elements.searchInput?.value || "").trim().toLowerCase();
+    const query = (elements.searchInput?.value || "").trim().toLowerCase();
 
-  filteredItems = !query
-    ? [...items]
-    : items.filter((item) => {
-        return (
-          String(item.item_name || "").toLowerCase().includes(query) ||
-          String(item.item_code || "").toLowerCase().includes(query) ||
-          String(item.description || "").toLowerCase().includes(query)
-        );
-      });
+    filteredItems = !query
+        ? [...items]
+        : items.filter((item) => {
+            return (
+                String(item.item_name || "").toLowerCase().includes(query) ||
+                String(item.item_code || "").toLowerCase().includes(query) ||
+                String(item.description || "").toLowerCase().includes(query)
+            );
+        });
 
-  renderItemsGrid();
-  renderAdminItems();
+    renderItemsGrid();
+    renderAdminItems();
 }
 async function searchAdminTransactions() {
     const query = elements.adminTxnSearch.value.trim();
@@ -1042,57 +1043,58 @@ async function searchAdminTransactions() {
     }
 }
 async function init() {
-  try {
-    setStatus("Loading data...", "neutral");
+    try {
+        setStatus("Loading data...", "neutral");
 
-    await Promise.all([
-      loadItems(),
-      loadStaff(),
-      loadDashboard(),
-      loadTransactions()
-    ]);
+        await Promise.all([
+            loadItems(),
+            loadStaff(),
+            loadDashboard(),
+            loadTransactions()
+        ]);
 
-    elements.itemsCount.textContent = String(items.length);
-    renderStaffOptions();
-    renderDashboardSummary();
-    updateLiveClock();
-    setInterval(updateLiveClock, 1000);
+        elements.itemsCount.textContent = String(items.length);
+        renderStaffOptions();
+        renderDashboardSummary();
+        updateLiveClock();
+        setInterval(updateLiveClock, 1000);
 
-    refreshItemViews();
-    renderCartUI();
-    introAnimation();
+        refreshItemViews();
+        renderCartUI();
+        introAnimation();
 
-    elements.searchInput.addEventListener("input", filterItems);
-    elements.form.addEventListener("submit", submitTransaction);
+        elements.searchInput.addEventListener("input", filterItems);
+        elements.form.addEventListener("submit", submitTransaction);
 
-    document.querySelectorAll(".admin-tab-btn").forEach((btn) => {
-      btn.addEventListener("click", () => setAdminTab(btn.dataset.tab));
-    });
+        document.querySelectorAll(".admin-tab-btn").forEach((btn) => {
+            btn.addEventListener("click", () => setAdminTab(btn.dataset.tab));
+        });
 
-    elements.adminCloseBtn.addEventListener("click", closeAdminModal);
-    elements.adminBackdrop.addEventListener("click", closeAdminModal);
-    elements.adminAddItemBtn.addEventListener("click", addItem);
-    elements.adminAddStaffBtn.addEventListener("click", addStaff);
-    elements.adminTxnSearchBtn.addEventListener("click", searchAdminTransactions);
+        elements.adminCloseBtn.addEventListener("click", closeAdminModal);
+        elements.adminBackdrop.addEventListener("click", closeAdminModal);
+        elements.adminAddItemBtn.addEventListener("click", addItem);
+        elements.adminAddStaffBtn.addEventListener("click", addStaff);
+        elements.adminTxnSearchBtn.addEventListener("click", searchAdminTransactions);
+        elements.adminOpenBtn.addEventListener("click", openAdminModal);
 
-    document.addEventListener("keydown", (event) => {
-      if (event.shiftKey && event.key.toLowerCase() === "d") {
-        event.preventDefault();
-        if (adminOpen) closeAdminModal();
-        else openAdminModal();
-      }
+        document.addEventListener("keydown", (event) => {
+            if (event.shiftKey && event.key.toLowerCase() === "d") {
+                event.preventDefault();
+                if (adminOpen) closeAdminModal();
+                else openAdminModal();
+            }
 
-      if (event.key === "Escape" && adminOpen) {
-        closeAdminModal();
-      }
-    });
+            if (event.key === "Escape" && adminOpen) {
+                closeAdminModal();
+            }
+        });
 
-    setAdminTab("items");
-    setStatus("Ready.", "success");
-  } catch (error) {
-    console.error(error);
-    setStatus(`Failed to initialize app: ${error.message}`, "error");
-  }
+        setAdminTab("items");
+        setStatus("Ready.", "success");
+    } catch (error) {
+        console.error(error);
+        setStatus(`Failed to initialize app: ${error.message}`, "error");
+    }
 }
 
 init();
