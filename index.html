@@ -1,202 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-  <title>NovaMart TPS POS</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaMart TPS POS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body class="min-h-screen bg-[radial-gradient(circle_at_top,_#1e293b_0%,_#0f172a_42%,_#020617_100%)] text-white">
-  <div class="relative overflow-hidden">
-    <div class="pointer-events-none absolute inset-0">
-      <div class="absolute -top-24 left-[-5rem] h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl"></div>
-      <div class="absolute right-[-4rem] top-28 h-80 w-80 rounded-full bg-fuchsia-500/20 blur-3xl"></div>
-      <div class="absolute bottom-[-5rem] left-1/3 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl"></div>
-    </div>
-
-    <main class="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <header class="hero-panel mb-6 rounded-[28px] border border-white/10 bg-white/8 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <div class="mb-3 flex flex-wrap items-center gap-2">
-              <span class="rounded-full border border-cyan-400/30 bg-cyan-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
-                TPS + MIS Demo
-              </span>
-              <span class="rounded-full border border-fuchsia-400/25 bg-fuchsia-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-200">
-                Live Point of Sale
-              </span>
-            </div>
-
-            <h1 class="text-3xl font-black tracking-tight text-white sm:text-4xl">
-              NovaMart Checkout Console
-            </h1>
-            <p class="mt-2 max-w-2xl text-sm text-slate-300 sm:text-base">
-              Select products, capture staff sales, submit transactions to Google Sheets, and present a polished TPS interface that actually looks worth showing.
-            </p>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:w-[480px]">
-            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
-              <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Date</p>
-              <p id="live-date" class="mt-2 text-sm font-semibold text-white">--</p>
-            </div>
-            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
-              <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Time</p>
-              <p id="live-time" class="mt-2 text-sm font-semibold text-white">--</p>
-            </div>
-            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
-              <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Items</p>
-              <p id="items-count" class="mt-2 text-sm font-semibold text-white">0</p>
-            </div>
-            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
-              <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Status</p>
-              <p class="mt-2 text-sm font-semibold text-emerald-300">Ready</p>
-            </div>
-          </div>
+    <div class="relative overflow-hidden">
+        <div class="pointer-events-none absolute inset-0">
+            <div class="absolute -top-24 left-[-5rem] h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl"></div>
+            <div class="absolute right-[-4rem] top-28 h-80 w-80 rounded-full bg-fuchsia-500/20 blur-3xl"></div>
+            <div class="absolute bottom-[-5rem] left-1/3 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl"></div>
         </div>
-      </header>
 
-      <div class="grid gap-6 xl:grid-cols-[1.65fr_0.95fr]">
-        <section class="rounded-[28px] border border-white/10 bg-white/8 p-4 shadow-2xl backdrop-blur-xl sm:p-5">
-          <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 class="text-xl font-bold text-white sm:text-2xl">Available Items</h2>
-              <p class="text-sm text-slate-300">Tap a product card to load it into the checkout panel.</p>
-            </div>
+        <main class="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <header
+                class="hero-panel mb-6 rounded-[28px] border border-white/10 bg-white/8 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <div class="mb-3 flex flex-wrap items-center gap-2">
+                            <span
+                                class="rounded-full border border-cyan-400/30 bg-cyan-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
+                                TPS + MIS Demo
+                            </span>
+                            <span
+                                class="rounded-full border border-fuchsia-400/25 bg-fuchsia-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-200">
+                                Live Point of Sale
+                            </span>
+                        </div>
 
-            <div class="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-3 py-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/>
-              </svg>
-              <input
-                id="search_input"
-                type="text"
-                placeholder="Search items..."
-                class="w-40 bg-transparent text-sm text-white placeholder:text-slate-400 outline-none sm:w-56"
-              />
-            </div>
-          </div>
+                        <h1 class="text-3xl font-black tracking-tight text-white sm:text-4xl">
+                            NovaMart Checkout Console
+                        </h1>
+                        <p class="mt-2 max-w-2xl text-sm text-slate-300 sm:text-base">
+                            Select products, capture staff sales, submit transactions to Google Sheets, and present a
+                            polished TPS interface that actually looks worth showing.
+                        </p>
+                    </div>
 
-          <div id="items_grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
-        </section>
-
-        <aside class="space-y-6">
-          <section class="checkout-panel rounded-[28px] border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur-xl">
-            <div class="mb-5 flex items-center justify-between">
-              <div>
-                <p class="text-xs uppercase tracking-[0.22em] text-cyan-200">Checkout</p>
-                <h2 class="mt-1 text-2xl font-black text-white">Current Sale</h2>
-              </div>
-              <div class="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-200">
-                Transaction Ready
-              </div>
-            </div>
-
-            <form id="transaction-form" class="space-y-5">
-              <div class="rounded-3xl border border-white/10 bg-slate-950/30 p-4">
-                <div class="flex items-start justify-between gap-3">
-                  <div>
-                    <p class="text-xs uppercase tracking-[0.18em] text-slate-400">Selected Item</p>
-                    <h3 id="selected_item_name" class="mt-2 text-2xl font-black text-white">No item selected</h3>
-                    <p id="selected_item_desc" class="mt-2 text-sm text-slate-300">Choose a card from the item grid to begin.</p>
-                  </div>
-                  <div id="selected_price_badge" class="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-lg font-black text-cyan-200">
-                    $0.00
-                  </div>
+                    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:w-[480px]">
+                        <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Date</p>
+                            <p id="live-date" class="mt-2 text-sm font-semibold text-white">--</p>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Time</p>
+                            <p id="live-time" class="mt-2 text-sm font-semibold text-white">--</p>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Items</p>
+                            <p id="items-count" class="mt-2 text-sm font-semibold text-white">0</p>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Status</p>
+                            <p class="mt-2 text-sm font-semibold text-emerald-300">Ready</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <section class="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+                <div class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
+                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Revenue</p>
+                    <p id="dash_revenue" class="mt-2 text-2xl font-black text-white">$0.00</p>
                 </div>
 
-                <div class="mt-4 grid grid-cols-2 gap-3">
-                  <div class="rounded-2xl border border-white/10 bg-white/5 p-3">
-                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Item Code</p>
-                    <p id="item_code" class="mt-2 text-sm font-semibold text-white">--</p>
-                  </div>
-                  <div class="rounded-2xl border border-white/10 bg-white/5 p-3">
-                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Unit Price</p>
-                    <p id="unit_price_text" class="mt-2 text-sm font-semibold text-white">$0.00</p>
-                  </div>
+                <div class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
+                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Transactions</p>
+                    <p id="dash_transactions" class="mt-2 text-2xl font-black text-white">0</p>
                 </div>
-              </div>
 
-              <div>
-                <label for="staff_name" class="mb-2 block text-sm font-medium text-slate-200">Staff Name</label>
-                <input
-                  id="staff_name"
-                  name="staff_name"
-                  type="text"
-                  required
-                  placeholder="Enter cashier or staff name"
-                  class="w-full rounded-2xl border border-white/10 bg-slate-950/35 px-4 py-3 text-white placeholder:text-slate-400 outline-none transition focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20"
-                />
-              </div>
-
-              <div id="total_card" class="rounded-[26px] border border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/20 via-violet-500/10 to-cyan-500/20 p-5 shadow-lg">
-                <p class="text-xs uppercase tracking-[0.22em] text-fuchsia-200">Total Price</p>
-                <div class="mt-2 flex items-end justify-between gap-4">
-                  <p id="total_price_display" class="text-4xl font-black leading-none text-white">$0.00</p>
-                  <p id="summary_quantity" class="text-sm font-semibold text-slate-200">0 units</p>
+                <div class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
+                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Staff</p>
+                    <p id="dash_staff" class="mt-2 text-2xl font-black text-white">0</p>
                 </div>
-              </div>
 
-              <button
-                id="submit_btn"
-                type="submit"
-                class="group relative w-full overflow-hidden rounded-[24px] bg-gradient-to-r from-cyan-400 via-sky-400 to-fuchsia-500 px-5 py-4 text-base font-black text-slate-950 shadow-[0_20px_50px_rgba(14,165,233,0.22)] transition hover:scale-[1.01] active:scale-[0.99]"
-              >
-                <span class="relative z-10">Submit Transaction</span>
-                <span class="absolute inset-0 translate-x-[-110%] bg-white/30 transition duration-700 group-hover:translate-x-[110%]"></span>
-              </button>
-            </form>
+                <div class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
+                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Units Sold</p>
+                    <p id="dash_units" class="mt-2 text-2xl font-black text-white">0</p>
+                </div>
+            </section>
+            <div class="grid gap-6 xl:grid-cols-[1.65fr_0.95fr]">
+                <section
+                    class="rounded-[28px] border border-white/10 bg-white/8 p-4 shadow-2xl backdrop-blur-xl sm:p-5">
+                    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-white sm:text-2xl">Available Items</h2>
+                            <p class="text-sm text-slate-300">Tap a product card to load it into the checkout panel.</p>
+                        </div>
 
-            <p id="status_message" class="mt-4 text-sm text-slate-300"></p>
-          </section>
+                        <div class="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-3 py-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-300" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
+                            </svg>
+                            <input id="search_input" type="text" placeholder="Search items..."
+                                class="w-40 bg-transparent text-sm text-white placeholder:text-slate-400 outline-none sm:w-56" />
+                        </div>
+                    </div>
 
-          <section class="summary-panel rounded-[28px] border border-white/10 bg-white/8 p-5 shadow-2xl backdrop-blur-xl">
-            <div class="mb-4 flex items-center justify-between">
-              <div>
-                <p class="text-xs uppercase tracking-[0.22em] text-emerald-200">Live Summary</p>
-                <h3 class="mt-1 text-xl font-black text-white">Sale Snapshot</h3>
-              </div>
-              <div class="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
-                Frontend Preview
-              </div>
+                    <div id="items_grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+                </section>
+
+                <aside class="space-y-6">
+                    <section
+                        class="checkout-panel rounded-[28px] border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur-xl">
+                        <div class="mb-5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.22em] text-cyan-200">Checkout</p>
+                                <h2 class="mt-1 text-2xl font-black text-white">Current Sale</h2>
+                            </div>
+                            <div
+                                class="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-200">
+                                Transaction Ready
+                            </div>
+                        </div>
+
+                        <form id="transaction-form" class="space-y-5">
+
+
+                            <div>
+                                <label for="staff_name"
+                                    class="mb-2 block text-sm font-medium text-slate-200">Staff</label>
+                                <select id="staff_name" name="staff_name" required
+                                    class="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-white appearance-none outline-none transition focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20">
+                                    <option value="" class="bg-slate-950 text-white">Select staff</option>
+                                </select>
+                            </div>
+
+                            <div id="total_card"
+                                class="rounded-[26px] border border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/20 via-violet-500/10 to-cyan-500/20 p-5 shadow-lg">
+                                <p class="text-xs uppercase tracking-[0.22em] text-fuchsia-200">Total Price</p>
+                                <div class="mt-2 flex items-end justify-between gap-4">
+                                    <p id="total_price_display" class="text-4xl font-black leading-none text-white">
+                                        $0.00</p>
+                                    <p id="summary_quantity" class="text-sm font-semibold text-slate-200">0 units</p>
+                                </div>
+                            </div>
+
+                            <button id="submit_btn" type="submit"
+                                class="group relative w-full overflow-hidden rounded-[24px] bg-gradient-to-r from-cyan-400 via-sky-400 to-fuchsia-500 px-5 py-4 text-base font-black text-slate-950 shadow-[0_20px_50px_rgba(14,165,233,0.22)] transition hover:scale-[1.01] active:scale-[0.99]">
+                                <span class="relative z-10">Submit Transaction</span>
+                                <span
+                                    class="absolute inset-0 translate-x-[-110%] bg-white/30 transition duration-700 group-hover:translate-x-[110%]"></span>
+                            </button>
+                        </form>
+
+                        <p id="status_message" class="mt-4 text-sm text-slate-300"></p>
+                    </section>
+
+                    <section
+                        class="summary-panel rounded-[28px] border border-white/10 bg-white/8 p-5 shadow-2xl backdrop-blur-xl">
+                        <div class="mb-4 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.22em] text-emerald-200">Live Summary</p>
+                                <h3 class="mt-1 text-xl font-black text-white">Sale Snapshot</h3>
+                            </div>
+                            <div
+                                class="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
+                                Frontend Preview
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-1">
+                            <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-4">
+                                <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Selected Item</p>
+                                <p id="summary_item" class="mt-2 text-lg font-bold text-white">None</p>
+                            </div>
+
+                            <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-4">
+                                <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Current Quantity</p>
+                                <p id="summary_quantity_secondary" class="mt-2 text-lg font-bold text-white">0</p>
+                            </div>
+
+                            <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-4">
+                                <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Current Total</p>
+                                <p id="summary_total" class="mt-2 text-lg font-bold text-white">$0.00</p>
+                            </div>
+                        </div>
+                    </section>
+                </aside>
             </div>
+        </main>
 
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-1">
-              <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-4">
-                <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Selected Item</p>
-                <p id="summary_item" class="mt-2 text-lg font-bold text-white">None</p>
-              </div>
-
-              <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-4">
-                <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Current Quantity</p>
-                <p id="summary_quantity_secondary" class="mt-2 text-lg font-bold text-white">0</p>
-              </div>
-
-              <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-4">
-                <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Current Total</p>
-                <p id="summary_total" class="mt-2 text-lg font-bold text-white">$0.00</p>
-              </div>
+        <div id="toast" class="pointer-events-none fixed bottom-5 right-5 z-50 translate-y-6 opacity-0">
+            <div class="rounded-2xl border border-emerald-400/25 bg-slate-950/90 px-5 py-4 shadow-2xl backdrop-blur-xl">
+                <p class="text-sm font-bold text-emerald-300">Transaction submitted</p>
+                <p class="mt-1 text-xs text-slate-300">The sale was sent to Google Sheets.</p>
             </div>
-          </section>
-        </aside>
-      </div>
-    </main>
+        </div>
 
-    <div
-      id="toast"
-      class="pointer-events-none fixed bottom-5 right-5 z-50 translate-y-6 opacity-0"
-    >
-      <div class="rounded-2xl border border-emerald-400/25 bg-slate-950/90 px-5 py-4 shadow-2xl backdrop-blur-xl">
-        <p class="text-sm font-bold text-emerald-300">Transaction submitted</p>
-        <p class="mt-1 text-xs text-slate-300">The sale was sent to Google Sheets.</p>
-      </div>
+        <div id="loading_spinner" class="pointer-events-none fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm">
+            <div class="flex flex-col items-center gap-4">
+                <div class="h-14 w-14 animate-spin rounded-full border-4 border-cyan-400/30 border-t-cyan-400"></div>
+                <p class="text-sm font-semibold text-white">Loading...</p>
+            </div>
+        </div>
     </div>
-  </div>
+    <div id="admin_modal" class="fixed inset-0 z-[60] hidden">
+        <div id="admin_backdrop" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"></div>
 
-  <script src="./app.js"></script>
+        <div class="relative flex min-h-screen items-center justify-center p-4">
+            <div id="admin_panel"
+                class="relative w-full max-w-6xl rounded-[28px] border border-white/10 bg-slate-900 text-white shadow-2xl">
+                <div class="flex items-center justify-between border-b border-white/10 px-6 py-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.18em] text-cyan-300">Hidden Admin</p>
+                        <h2 class="mt-1 text-2xl font-black">Operations Console</h2>
+                    </div>
+
+                    <button id="admin_close_btn" type="button"
+                        class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10">
+                        Close
+                    </button>
+                </div>
+
+                <div class="border-b border-white/10 px-6 py-3">
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button"
+                            class="admin-tab-btn rounded-xl bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-200"
+                            data-tab="items">Items</button>
+                        <button type="button"
+                            class="admin-tab-btn rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-slate-300"
+                            data-tab="staff">Staff</button>
+                        <button type="button"
+                            class="admin-tab-btn rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-slate-300"
+                            data-tab="transactions">Transactions</button>
+                        <button type="button"
+                            class="admin-tab-btn rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-slate-300"
+                            data-tab="faker">Faker</button>
+                    </div>
+                </div>
+
+                <div class="max-h-[75vh] overflow-y-auto p-6">
+                    <section class="admin-tab" data-tab-content="items">
+                        <div class="grid gap-6 lg:grid-cols-[360px_1fr]">
+                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <h3 class="text-lg font-black">Add Item</h3>
+                                <div class="mt-4 space-y-3">
+                                    <input id="admin_item_code" type="text" placeholder="Item code"
+                                        class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none">
+                                    <input id="admin_item_name" type="text" placeholder="Item name"
+                                        class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none">
+                                    <input id="admin_item_description" type="text" placeholder="Description"
+                                        class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none">
+                                    <input id="admin_item_price" type="number" step="0.01" placeholder="Unit price"
+                                        class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none">
+                                    <button id="admin_add_item_btn" type="button"
+                                        class="w-full rounded-xl bg-cyan-400 px-4 py-3 font-black text-slate-950">Add
+                                        Item</button>
+                                </div>
+                            </div>
+
+                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <div class="mb-4 flex items-center justify-between">
+                                    <h3 class="text-lg font-black">Items</h3>
+                                    <p id="admin_items_count" class="text-sm text-slate-300">0 items</p>
+                                </div>
+                                <div id="admin_items_list" class="space-y-2"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="admin-tab hidden" data-tab-content="staff">
+                        <div class="grid gap-6 lg:grid-cols-[360px_1fr]">
+                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <h3 class="text-lg font-black">Add Staff</h3>
+                                <div class="mt-4 space-y-3">
+                                    <input id="admin_staff_name" type="text" placeholder="Staff name"
+                                        class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none">
+                                    <button id="admin_add_staff_btn" type="button"
+                                        class="w-full rounded-xl bg-cyan-400 px-4 py-3 font-black text-slate-950">Add
+                                        Staff</button>
+                                </div>
+                            </div>
+
+                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <div class="mb-4 flex items-center justify-between">
+                                    <h3 class="text-lg font-black">Staff</h3>
+                                    <p id="admin_staff_count" class="text-sm text-slate-300">0 staff</p>
+                                </div>
+                                <div id="admin_staff_list" class="space-y-2"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="admin-tab hidden" data-tab-content="transactions">
+                        <div class="grid gap-4 lg:grid-cols-[220px_220px_1fr_auto]">
+                            <input id="admin_txn_search" type="text" placeholder="Search transactions"
+                                class="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none">
+                            <input id="admin_txn_date" type="date"
+                                class="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none">
+                            <select id="admin_txn_staff"
+                                class="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none">
+                                <option value="">All staff</option>
+                            </select>
+                            <button id="admin_txn_search_btn" type="button"
+                                class="rounded-xl bg-cyan-400 px-4 py-3 font-black text-slate-950">Search</button>
+                        </div>
+
+                        <div class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+                            <div class="mb-4 flex items-center justify-between">
+                                <h3 class="text-lg font-black">Transactions</h3>
+                                <p id="admin_transactions_count" class="text-sm text-slate-300">0 results</p>
+                            </div>
+                            <div id="admin_transactions_list" class="space-y-2"></div>
+                        </div>
+                    </section>
+
+                    <section class="admin-tab hidden" data-tab-content="faker">
+                        <div class="rounded-2xl border border-dashed border-white/10 bg-white/5 p-6 text-center">
+                            <h3 class="text-lg font-black">Faker Tools</h3>
+                            <p class="mt-2 text-sm text-slate-300">We’ll wire fake items and fake transactions here
+                                next.</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./app.js"></script>
 </body>
+
 </html>
