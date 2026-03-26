@@ -127,7 +127,7 @@ function renderItemsGrid() {
 
   if (!filteredItems.length) {
     elements.itemsGrid.innerHTML = `
-      <div class="col-span-full rounded-[26px] border border-white/10 bg-white/5 p-8 text-center">
+      <div class="col-span-full rounded-[22px] border border-white/10 bg-white/5 p-8 text-center">
         <p class="text-lg font-bold text-white">No items found</p>
         <p class="mt-2 text-sm text-slate-300">Try a different search term.</p>
       </div>
@@ -135,61 +135,47 @@ function renderItemsGrid() {
     return;
   }
 
-  filteredItems.forEach((item, index) => {
+  filteredItems.forEach((item) => {
     const qtyInCart = getCartQuantityForItem(item.item_code);
 
     const card = document.createElement("button");
     card.type = "button";
     card.dataset.code = item.item_code;
     card.className = `
-      item-card group relative overflow-hidden rounded-[26px] border p-4 text-left transition duration-300
+      item-card relative overflow-hidden rounded-[20px] border p-4 text-left transition duration-200
       ${qtyInCart > 0
-        ? "border-cyan-300/50 bg-white/14 shadow-[0_20px_50px_rgba(34,211,238,0.18)]"
-        : "border-white/10 bg-white/8 hover:border-white/20 hover:bg-white/10"}
+        ? "border-cyan-300/60 bg-slate-800/90 shadow-[0_12px_30px_rgba(34,211,238,0.14)]"
+        : "border-white/10 bg-slate-800/70 hover:border-cyan-300/35 hover:bg-slate-800"}
     `;
 
     card.innerHTML = `
-      <div class="absolute inset-0 bg-gradient-to-br ${item.accent} opacity-80"></div>
-      <div class="relative z-10">
-        <div class="mb-3 flex items-start justify-between gap-3">
-          <div>
-            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">${item.item_code}</p>
-            <h3 class="mt-2 text-xl font-black text-white">${item.item_name}</h3>
-          </div>
-
-          <div class="rounded-2xl border border-white/10 bg-slate-950/35 px-3 py-2 text-sm font-black text-white">
-            ${formatCurrency(item.unit_price)}
-          </div>
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">${item.item_code}</p>
+          <h3 class="mt-1 text-lg font-bold text-white">${item.item_name}</h3>
+          <p class="mt-1 line-clamp-2 text-sm text-slate-300">${item.description}</p>
         </div>
 
-        <p class="min-h-[40px] text-sm text-slate-200">${item.description}</p>
-
-        <div class="mt-4 flex items-center justify-between">
-          <span class="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-200">
-            ${qtyInCart > 0 ? `${qtyInCart} in cart` : "Add to cart"}
-          </span>
-
-          <span class="text-sm font-semibold text-cyan-200 transition group-hover:translate-x-1">
-            + Add
-          </span>
+        <div class="shrink-0 rounded-xl bg-cyan-400/10 px-3 py-2 text-sm font-bold text-cyan-200">
+          ${formatCurrency(item.unit_price)}
         </div>
+      </div>
+
+      <div class="mt-4 flex items-center justify-between">
+        <span class="text-xs font-semibold uppercase tracking-[0.16em] ${
+          qtyInCart > 0 ? "text-emerald-300" : "text-slate-400"
+        }">
+          ${qtyInCart > 0 ? `${qtyInCart} in cart` : "Tap to add"}
+        </span>
+
+        <span class="rounded-lg bg-white/8 px-3 py-1.5 text-sm font-semibold text-white">
+          + Add
+        </span>
       </div>
     `;
 
     card.addEventListener("click", () => addToCart(item.item_code));
-
     elements.itemsGrid.appendChild(card);
-
-    if (window.gsap) {
-      gsap.from(card, {
-        opacity: 0,
-        y: 24,
-        scale: 0.96,
-        duration: 0.45,
-        delay: index * 0.05,
-        ease: "power2.out"
-      });
-    }
   });
 }
 
@@ -202,13 +188,13 @@ function renderCartUI() {
         <div class="mb-4 flex items-center justify-between gap-3">
           <div>
             <p class="text-xs uppercase tracking-[0.18em] text-slate-400">Cart</p>
-            <h3 class="mt-1 text-2xl font-black text-white">Current Basket</h3>
+            <h3 class="mt-1 text-xl font-black text-white">Current Basket</h3>
           </div>
           <div class="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-sm font-black text-cyan-200">
             <span id="cart_distinct_count">0</span> items
           </div>
         </div>
-        <div id="cart_items" class="space-y-3"></div>
+        <div id="cart_items" class="space-y-2"></div>
       </div>
     `;
     elements.form.insertAdjacentHTML("afterbegin", markup);
@@ -216,7 +202,6 @@ function renderCartUI() {
   }
 
   const cartDistinctCount = document.getElementById("cart_distinct_count");
-
   if (cartDistinctCount) {
     cartDistinctCount.textContent = String(getCartDistinctCount());
   }
@@ -232,45 +217,44 @@ function renderCartUI() {
     cartContainer.innerHTML = cart.map((item) => {
       const lineTotal = item.quantity * item.unit_price;
       return `
-        <div class="cart-row rounded-2xl border border-white/10 bg-white/5 p-4" data-code="${item.item_code}">
-          <div class="flex items-start justify-between gap-3">
+        <div class="cart-row rounded-2xl border border-white/10 bg-white/5 px-3 py-3" data-code="${item.item_code}">
+          <div class="flex items-center justify-between gap-3">
             <div class="min-w-0">
-              <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">${item.item_code}</p>
-              <h4 class="mt-1 text-lg font-bold text-white">${item.item_name}</h4>
-              <p class="mt-1 text-sm text-slate-300">${item.description}</p>
+              <p class="text-sm font-bold text-white">${item.item_name}</p>
+              <p class="text-xs text-slate-400">${item.item_code} • ${formatCurrency(item.unit_price)} each</p>
             </div>
-            <button
-              type="button"
-              data-remove="${item.item_code}"
-              class="rounded-xl border border-rose-400/20 bg-rose-400/10 px-3 py-2 text-xs font-semibold text-rose-200 transition hover:bg-rose-400/15"
-            >
-              Remove
-            </button>
+
+            <div class="text-right">
+              <p class="text-sm font-bold text-cyan-200">${formatCurrency(lineTotal)}</p>
+            </div>
           </div>
 
-          <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="mt-3 flex items-center justify-between gap-3">
             <div class="flex items-center gap-2">
               <button
                 type="button"
                 data-dec="${item.item_code}"
-                class="rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-lg font-bold text-white transition hover:bg-white/15"
+                class="rounded-lg border border-white/10 bg-white/10 px-3 py-1.5 text-base font-bold text-white"
               >−</button>
 
-              <div class="rounded-xl border border-white/10 bg-slate-950/35 px-4 py-2 text-sm font-bold text-white min-w-[56px] text-center">
+              <div class="min-w-[42px] text-center text-sm font-bold text-white">
                 ${item.quantity}
               </div>
 
               <button
                 type="button"
                 data-inc="${item.item_code}"
-                class="rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-lg font-bold text-white transition hover:bg-white/15"
+                class="rounded-lg border border-white/10 bg-white/10 px-3 py-1.5 text-base font-bold text-white"
               >+</button>
             </div>
 
-            <div class="text-right">
-              <p class="text-xs uppercase tracking-[0.18em] text-slate-400">Line Total</p>
-              <p class="mt-1 text-lg font-black text-cyan-200">${formatCurrency(lineTotal)}</p>
-            </div>
+            <button
+              type="button"
+              data-remove="${item.item_code}"
+              class="text-xs font-semibold uppercase tracking-[0.14em] text-rose-300"
+            >
+              Remove
+            </button>
           </div>
         </div>
       `;
