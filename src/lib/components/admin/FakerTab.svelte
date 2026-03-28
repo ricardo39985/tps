@@ -6,7 +6,8 @@
   export let staff = [];
   export let onGenerate = () => {};
 
-  let userScope = 'all';
+  let allUsers = true;
+  let selectedStaffNames = [];
   let fakeCount = 10;
   let startDate = '';
   let endDate = '';
@@ -29,6 +30,10 @@
     if (!endDate) {
       endDate = today;
     }
+
+    if (!selectedStaffNames.length && staff.length) {
+      selectedStaffNames = staff.map((member) => member.name);
+    }
   });
 
   $: validationError = (() => {
@@ -41,7 +46,7 @@
     if (endDate > today) return 'The end date cannot be later than today.';
     if (startDate < minDate) return 'The start date must be within the last 10 years.';
     if (startDate > endDate) return 'The start date cannot be later than the end date.';
-    if (userScope !== 'all' && !staff.some((member) => member.name === userScope)) return 'Selected staff member is not available.';
+    if (!allUsers && !selectedStaffNames.some((name) => staff.some((member) => member.name === name))) return 'Select at least one available staff member.';
 
     return '';
   })();
@@ -58,7 +63,8 @@
     feedbackTone = 'neutral';
 
     const result = await onGenerate({
-      staffScope: userScope,
+      allUsers,
+      staffNames: selectedStaffNames,
       count: Number(fakeCount),
       startDate,
       endDate
@@ -74,6 +80,18 @@
 
     busy = false;
   }
+
+  function toggleStaff(memberName) {
+    if (selectedStaffNames.includes(memberName)) {
+      selectedStaffNames = selectedStaffNames.filter((name) => name !== memberName);
+    } else {
+      selectedStaffNames = [...selectedStaffNames, memberName];
+    }
+  }
+
+  function selectAllStaff() {
+    selectedStaffNames = staff.map((member) => member.name);
+  }
 </script>
 
 <section class="grid gap-6 lg:grid-cols-[380px_1fr]">
@@ -87,12 +105,40 @@
     <div class="mt-5 space-y-4">
       <label class="block space-y-2">
         <span class="text-sm font-semibold text-slate-200">User scope</span>
-        <select bind:value={userScope} class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none">
-          <option value="all">All users</option>
-          {#each staff as member}
-            <option value={member.name}>{member.name}</option>
-          {/each}
-        </select>
+        <label class="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-slate-200">
+          <input type="checkbox" bind:checked={allUsers} class="h-4 w-4 rounded border-white/20 bg-slate-900 text-cyan-400" />
+          <span>All users</span>
+        </label>
+        <div class="rounded-xl border border-white/10 bg-slate-950/30 p-3">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Pick staff members</p>
+            <button
+              type="button"
+              class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={allUsers}
+              on:click={selectAllStaff}
+            >
+              Select all
+            </button>
+          </div>
+          <div class="grid gap-2 sm:grid-cols-2">
+            {#each staff as member}
+              <label class={`flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition ${selectedStaffNames.includes(member.name) ? 'border-cyan-400/40 bg-cyan-400/10 text-white' : 'border-white/10 bg-white/5 text-slate-200'} ${allUsers ? 'opacity-50' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={selectedStaffNames.includes(member.name)}
+                  disabled={allUsers}
+                  class="h-4 w-4 rounded border-white/20 bg-slate-900 text-cyan-400"
+                  on:change={() => toggleStaff(member.name)}
+                />
+                <span class="truncate">{member.name}</span>
+              </label>
+            {/each}
+          </div>
+          {#if !allUsers && !selectedStaffNames.length}
+            <p class="mt-3 text-xs text-rose-300">Pick at least one staff member.</p>
+          {/if}
+        </div>
       </label>
 
       <label class="block space-y-2">

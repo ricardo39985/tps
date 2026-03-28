@@ -208,6 +208,16 @@ function randomTime24() {
   return `${pad2(hour)}:${pad2(minute)}:${pad2(second)}`;
 }
 
+function getNextItemCodeFromItems(currentItems = []) {
+  const highest = currentItems.reduce((max, item) => {
+    const match = String(item?.item_code || '').trim().match(/^C(\d+)$/i);
+    if (!match) return max;
+    return Math.max(max, Number(match[1] || 0));
+  }, 0);
+
+  return `C${String(highest + 1).padStart(3, '0')}`;
+}
+
 export function updateBasketQuantity(itemCode, delta) {
   basket.update((currentBasket) => {
     const nextBasket = currentBasket
@@ -238,7 +248,7 @@ export function formatBasketTotalForStatus() {
   return formatCurrency(get(basketTotal));
 }
 
-export async function generateFakeTransactions({ staffScope = 'all', count, startDate, endDate } = {}) {
+export async function generateFakeTransactions({ allUsers = true, staffNames = [], count, startDate, endDate } = {}) {
   const requestedCount = Number(count);
   const currentItems = get(items);
   const currentStaff = get(staff);
@@ -280,20 +290,22 @@ export async function generateFakeTransactions({ staffScope = 'all', count, star
     return { ok: false };
   }
 
-  const staffPool = staffScope === 'all'
+  const selectedStaffNames = Array.isArray(staffNames)
+    ? staffNames.map((name) => String(name || '').trim()).filter(Boolean)
+    : [];
+
+  const staffPool = allUsers
     ? currentStaff
-    : currentStaff.filter((member) => member.name === staffScope);
+    : currentStaff.filter((member) => selectedStaffNames.includes(member.name));
 
   if (!staffPool.length) {
-    setStatus('Fake generator: selected staff member is not available.', 'error');
+    setStatus('Fake generator: select at least one available staff member.', 'error');
     return { ok: false };
   }
 
   const transactionsToInsert = Array.from({ length: requestedCount }, (_, index) => {
     const item = currentItems[randomInt(0, currentItems.length - 1)];
-    const staffMember = staffScope === 'all'
-      ? staffPool[randomInt(0, staffPool.length - 1)]
-      : staffPool[0];
+    const staffMember = staffPool[randomInt(0, staffPool.length - 1)];
     const quantity = randomInt(1, 5);
     const unitPrice = Number(item.unit_price || 0);
     const totalPrice = unitPrice * quantity;
@@ -391,9 +403,9 @@ export async function submitSale() {
   }
 }
 
-export async function addItem({ item_code, item_name, description, unit_price }) {
-  if (!item_code || !item_name || !unit_price) {
-    setStatus('Admin: item code, item name, and price are required.', 'error');
+export async function addItem({ item_name, description, unit_price } = {}) {
+  if (!item_name || !unit_price) {
+    setStatus('Admin: item name and price are required.', 'error');
     return { ok: false };
   }
 
@@ -401,6 +413,9 @@ export async function addItem({ item_code, item_name, description, unit_price })
   setLoadingMessage('Saving item...');
 
   try {
+    const currentItems = get(items);
+    const item_code = getNextItemCodeFromItems(currentItems);
+
     await postAction({
       action: 'createItem',
       item_code,
@@ -410,7 +425,7 @@ export async function addItem({ item_code, item_name, description, unit_price })
     });
 
     await loadCoreData();
-    setStatus('Item added.', 'success');
+    setStatus(`Item ${item_code} added.`, 'success');
     return { ok: true };
   } catch (error) {
     setStatus(`Add item failed: ${error.message}`, 'error');

@@ -5,21 +5,27 @@
   export let onAddItem = () => {};
   export let onDeleteItem = () => {};
 
-  let itemCode = '';
   let itemName = '';
   let description = '';
   let itemPrice = '';
 
+  $: nextItemCode = (() => {
+    const highest = items.reduce((max, item) => {
+      const match = String(item?.item_code || '').trim().match(/^C(\d+)$/i);
+      return match ? Math.max(max, Number(match[1] || 0)) : max;
+    }, 0);
+
+    return `C${String(highest + 1).padStart(3, '0')}`;
+  })();
+
   async function add() {
     const result = await onAddItem({
-      item_code: itemCode.trim(),
       item_name: itemName.trim(),
       description: description.trim(),
       unit_price: itemPrice
     });
 
     if (result?.ok) {
-      itemCode = '';
       itemName = '';
       description = '';
       itemPrice = '';
@@ -32,7 +38,10 @@
     <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
       <h3 class="text-lg font-black">Add Item</h3>
       <div class="mt-4 space-y-3">
-        <input bind:value={itemCode} type="text" placeholder="Item code" class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none" />
+        <div class="rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3">
+          <p class="text-xs uppercase tracking-[0.18em] text-cyan-200">Item code</p>
+          <p class="mt-1 text-sm font-semibold text-white">{nextItemCode}</p>
+        </div>
         <input bind:value={itemName} type="text" placeholder="Item name" class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none" />
         <input bind:value={description} type="text" placeholder="Description" class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none" />
         <input bind:value={itemPrice} type="number" step="0.01" placeholder="Unit price" class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none" />
