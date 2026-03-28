@@ -44,7 +44,7 @@
   });
 </script>
 
-<div class="chart-wrapper rounded-[22px] border border-white/10 bg-slate-950/25 p-4 shadow-lg">
+<div class="chart-wrapper surface-inner rounded-[22px] p-4">
   <div class="relative w-full" style={`height:${height}px;`}>
     <canvas bind:this={canvas} aria-label={ariaLabel}></canvas>
   </div>

@@ -1,7 +1,7 @@
 import { derived, writable } from 'svelte/store';
 import { formatCurrency } from '../utils/format.js';
 import { normalizeDashboardLabel, uniqueDashboardLabels } from '../utils/dashboard.js';
-import { items, loading, staff, transactions } from './app-state.js';
+import { items, loading, staff, transactions, uiTheme } from './app-state.js';
 
 export const dashboardProductFilter = writable('all');
 export const dashboardStaffFilter = writable('all');
@@ -89,16 +89,24 @@ function addCounts(options, records, keySelector) {
   }));
 }
 
-function buildChartTheme() {
+function buildChartTheme(theme = 'light') {
+  if (theme === 'dark') {
+    return {
+      borderColor: 'rgba(255, 145, 194, 0.95)',
+      gridColor: 'rgba(255, 255, 255, 0.08)',
+      tickColor: 'rgba(255, 242, 249, 0.88)'
+    };
+  }
+
   return {
-    borderColor: 'rgba(34, 211, 238, 0.95)',
-    gridColor: 'rgba(148, 163, 184, 0.12)',
-    tickColor: '#cbd5e1'
+    borderColor: 'rgba(255, 127, 169, 0.95)',
+    gridColor: 'rgba(131, 112, 132, 0.12)',
+    tickColor: 'rgba(74, 54, 78, 0.86)'
   };
 }
 
-function buildRevenueTrendChart(records) {
-  const theme = buildChartTheme();
+function buildRevenueTrendChart(records, themeName) {
+  const theme = buildChartTheme(themeName);
   const daily = aggregateByDate(records);
 
   return {
@@ -109,12 +117,12 @@ function buildRevenueTrendChart(records) {
           label: 'Revenue',
           data: daily.map((entry) => entry.revenue),
           borderColor: theme.borderColor,
-          backgroundColor: 'rgba(34, 211, 238, 0.18)',
+          backgroundColor: themeName === 'dark' ? 'rgba(255, 145, 194, 0.16)' : 'rgba(255, 127, 169, 0.16)',
           fill: true,
           tension: 0.35,
           pointRadius: 3,
           pointHoverRadius: 5,
-          pointBackgroundColor: '#22d3ee'
+          pointBackgroundColor: theme.borderColor
         }
       ]
     },
@@ -146,8 +154,8 @@ function buildRevenueTrendChart(records) {
   };
 }
 
-function buildHorizontalBarChart(records, label, color, fallbackColor) {
-  const theme = buildChartTheme();
+function buildHorizontalBarChart(records, label, color, fallbackColor, themeName) {
+  const theme = buildChartTheme(themeName);
   const sliced = records.slice(0, 5);
 
   return {
@@ -213,8 +221,8 @@ function buildMetrics(records, totalProducts, totalStaff) {
 }
 
 export const dashboardInsights = derived(
-  [items, staff, transactions, loading, dashboardProductFilter, dashboardStaffFilter],
-  ([$items, $staff, $transactions, $loading, $productFilter, $staffFilter]) => {
+  [items, staff, transactions, loading, dashboardProductFilter, dashboardStaffFilter, uiTheme],
+  ([$items, $staff, $transactions, $loading, $productFilter, $staffFilter, $uiTheme]) => {
     const normalizedTransactions = ($transactions || []).map(buildTransactionRecord);
     const itemLabels = ($items || []).map((item) => normalizeDashboardLabel(item.item_name || item.item_code));
     const staffLabels = ($staff || []).map((member) => normalizeDashboardLabel(member.name));
@@ -270,18 +278,20 @@ export const dashboardInsights = derived(
       topStaff: filteredStaff.slice(0, 5),
       allProducts,
       allStaff,
-      revenueTrendChart: buildRevenueTrendChart(filteredTransactions),
+      revenueTrendChart: buildRevenueTrendChart(filteredTransactions, $uiTheme),
       productPerformanceChart: buildHorizontalBarChart(
         filteredProducts,
         'Product revenue',
-        ['rgba(34, 211, 238, 0.86)', 'rgba(56, 189, 248, 0.84)', 'rgba(167, 139, 250, 0.82)', 'rgba(52, 211, 153, 0.82)', 'rgba(244, 114, 182, 0.8)'],
-        'rgba(34, 211, 238, 0.86)'
+        ['rgba(255, 127, 169, 0.86)', 'rgba(110, 221, 247, 0.84)', 'rgba(194, 157, 253, 0.82)', 'rgba(134, 239, 172, 0.82)', 'rgba(250, 204, 148, 0.84)'],
+        'rgba(255, 127, 169, 0.86)',
+        $uiTheme
       ),
       staffPerformanceChart: buildHorizontalBarChart(
         filteredStaff,
         'Staff revenue',
-        ['rgba(52, 211, 153, 0.86)', 'rgba(56, 189, 248, 0.84)', 'rgba(167, 139, 250, 0.82)', 'rgba(244, 114, 182, 0.8)', 'rgba(251, 191, 36, 0.82)'],
-        'rgba(52, 211, 153, 0.86)'
+        ['rgba(134, 239, 172, 0.86)', 'rgba(110, 221, 247, 0.84)', 'rgba(194, 157, 253, 0.82)', 'rgba(255, 127, 169, 0.8)', 'rgba(250, 204, 148, 0.82)'],
+        'rgba(134, 239, 172, 0.86)',
+        $uiTheme
       ),
       noResultsMessage
     };

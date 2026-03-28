@@ -21,6 +21,7 @@ export const loading = writable(false);
 export const loadingMessage = writable('Loading data...');
 export const status = writable({ message: 'Loading data...', tone: 'neutral' });
 export const selectedStaff = writable('');
+export const uiTheme = writable('light');
 export const liveClock = writable({
   date: '--',
   time: '--'
@@ -121,11 +122,11 @@ export async function loadCoreData() {
       description: item.description,
       unit_price: Number(item.unit_price || 0),
       accent: [
-        'from-cyan-500/25 to-sky-500/10',
-        'from-blue-500/25 to-indigo-500/10',
-        'from-amber-500/25 to-orange-500/10',
-        'from-emerald-500/25 to-teal-500/10',
-        'from-fuchsia-500/25 to-violet-500/10'
+        'from-rose-400/25 to-pink-300/10',
+        'from-sky-300/25 to-cyan-200/10',
+        'from-amber-300/25 to-orange-200/10',
+        'from-emerald-300/25 to-lime-200/10',
+        'from-fuchsia-300/25 to-violet-200/10'
       ][index % 5]
     })));
 

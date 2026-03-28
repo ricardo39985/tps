@@ -15,31 +15,31 @@
   $: hasResults = Boolean(dashboard && dashboard.filteredTransactions && dashboard.filteredTransactions.length);
 </script>
 
-<section class="rounded-[28px] border border-white/10 bg-white/8 p-4 shadow-2xl backdrop-blur-xl sm:p-5">
-  <div class="flex flex-col gap-4 border-b border-white/10 pb-4 lg:flex-row lg:items-end lg:justify-between">
+<section class="surface rounded-[30px] p-4 sm:p-5">
+  <div class="flex flex-col gap-4 border-b border-[var(--border-soft)] pb-4 lg:flex-row lg:items-end lg:justify-between">
     <div>
-      <p class="text-xs uppercase tracking-[0.22em] text-cyan-200">Analytics</p>
-      <h2 class="mt-1 text-3xl font-black text-white">Sales Insights Dashboard</h2>
-      <p class="mt-2 max-w-3xl text-sm text-slate-300">
+      <p class="text-xs uppercase tracking-[0.22em] text-[var(--accent)]">Analytics</p>
+      <h2 class="mt-1 text-3xl font-black text-[var(--text)]">Sales Insights Dashboard</h2>
+      <p class="mt-2 max-w-3xl text-sm text-[var(--muted)]">
         Review revenue, transaction volume, product performance, and staff performance. Refine the view by product type or staff member to inspect any slice of the data.
       </p>
     </div>
 
-    <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
-      <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Current scope</p>
-      <p class="mt-1 font-semibold text-white">{dashboard?.filterSummary || 'All products • All staff'}</p>
+    <div class="surface-inner rounded-2xl px-4 py-3 text-sm text-[var(--text)]">
+      <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Current scope</p>
+      <p class="mt-1 font-semibold text-[var(--text)]">{dashboard?.filterSummary || 'All products • All staff'}</p>
     </div>
   </div>
 
   {#if dashboard?.loading}
     <div class="grid gap-4 py-6">
-      <div class="h-24 animate-pulse rounded-[24px] bg-white/5"></div>
-      <div class="h-72 animate-pulse rounded-[24px] bg-white/5"></div>
+      <div class="surface-soft h-24 animate-pulse rounded-[24px]"></div>
+      <div class="surface-soft h-72 animate-pulse rounded-[24px]"></div>
     </div>
   {:else if !hasDashboard}
     <div class="py-8 text-center">
-      <h3 class="text-xl font-black text-white">Loading dashboard data</h3>
-      <p class="mt-2 text-sm text-slate-300">The sheet data is still being fetched. The charts will appear as soon as the data is ready.</p>
+      <h3 class="text-xl font-black text-[var(--text)]">Loading dashboard data</h3>
+      <p class="mt-2 text-sm text-[var(--muted)]">The sheet data is still being fetched. The charts will appear as soon as the data is ready.</p>
     </div>
   {:else}
     <div class="mt-4 space-y-4">
@@ -57,13 +57,13 @@
       />
 
       {#if !hasResults}
-        <div class="rounded-[24px] border border-dashed border-cyan-300/30 bg-slate-950/30 p-8 text-center">
-          <h3 class="text-xl font-black text-white">No matching records</h3>
-          <p class="mt-2 text-sm text-slate-300">{dashboard.noResultsMessage}</p>
+        <div class="surface-soft rounded-[24px] border-dashed border-[var(--accent-2)] p-8 text-center">
+          <h3 class="text-xl font-black text-[var(--text)]">No matching records</h3>
+          <p class="mt-2 text-sm text-[var(--muted)]">{dashboard.noResultsMessage}</p>
           {#if dashboard.hasFilters}
             <button
               type="button"
-              class="mt-4 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/20"
+              class="mt-4 candy-button-secondary px-4 py-2 text-sm"
               on:click={onClearFilters}
             >
               Clear filters
@@ -85,45 +85,45 @@
         </div>
 
         <aside class="space-y-4">
-          <div class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
-            <p class="text-xs uppercase tracking-[0.22em] text-fuchsia-200">Top products</p>
+          <div class="surface-strong rounded-[24px] p-4">
+            <p class="text-xs uppercase tracking-[0.22em] text-[var(--accent-3)]">Top products</p>
             {#if dashboard.topProducts.length}
               <div class="mt-3 space-y-3">
                 {#each dashboard.topProducts as product}
-                  <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-3">
+                  <div class="surface-inner rounded-2xl p-3">
                     <div class="flex items-center justify-between gap-3">
                       <div>
-                        <p class="font-semibold text-white">{product.label}</p>
-                        <p class="text-xs text-slate-400">{product.transactions} transaction{product.transactions === 1 ? '' : 's'} · {product.units} unit{product.units === 1 ? '' : 's'}</p>
+                        <p class="font-semibold text-[var(--text)]">{product.label}</p>
+                        <p class="text-xs text-[var(--muted)]">{product.transactions} transaction{product.transactions === 1 ? '' : 's'} · {product.units} unit{product.units === 1 ? '' : 's'}</p>
                       </div>
-                      <p class="text-sm font-bold text-cyan-200">{formatCurrency(product.revenue)}</p>
+                      <p class="text-sm font-bold text-[var(--accent)]">{formatCurrency(product.revenue)}</p>
                     </div>
                   </div>
                 {/each}
               </div>
             {:else}
-              <p class="mt-3 text-sm text-slate-300">No product insights for the current filter scope.</p>
+              <p class="mt-3 text-sm text-[var(--muted)]">No product insights for the current filter scope.</p>
             {/if}
           </div>
 
-          <div class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
-            <p class="text-xs uppercase tracking-[0.22em] text-emerald-200">Top staff</p>
+          <div class="surface-strong rounded-[24px] p-4">
+            <p class="text-xs uppercase tracking-[0.22em] text-[var(--accent-4)]">Top staff</p>
             {#if dashboard.topStaff.length}
               <div class="mt-3 space-y-3">
                 {#each dashboard.topStaff as member}
-                  <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-3">
+                  <div class="surface-inner rounded-2xl p-3">
                     <div class="flex items-center justify-between gap-3">
                       <div>
-                        <p class="font-semibold text-white">{member.label}</p>
-                        <p class="text-xs text-slate-400">{member.transactions} transaction{member.transactions === 1 ? '' : 's'} · {member.units} unit{member.units === 1 ? '' : 's'}</p>
+                        <p class="font-semibold text-[var(--text)]">{member.label}</p>
+                        <p class="text-xs text-[var(--muted)]">{member.transactions} transaction{member.transactions === 1 ? '' : 's'} · {member.units} unit{member.units === 1 ? '' : 's'}</p>
                       </div>
-                      <p class="text-sm font-bold text-emerald-200">{formatCurrency(member.revenue)}</p>
+                      <p class="text-sm font-bold text-emerald-600">{formatCurrency(member.revenue)}</p>
                     </div>
                   </div>
                 {/each}
               </div>
             {:else}
-              <p class="mt-3 text-sm text-slate-300">No staff insights for the current filter scope.</p>
+              <p class="mt-3 text-sm text-[var(--muted)]">No staff insights for the current filter scope.</p>
             {/if}
           </div>
         </aside>

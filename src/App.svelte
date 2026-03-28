@@ -33,6 +33,7 @@
     openAdmin,
     removeFromBasket,
     selectedStaff,
+    uiTheme,
     setAdminTab,
     setSelectedStaff,
     staff,
@@ -54,7 +55,26 @@
 
   let searchQuery = '';
   let activeTab = 'checkout';
+  let theme = 'light';
   let clockCleanup = null;
+
+  function applyTheme(nextTheme) {
+    theme = nextTheme === 'dark' ? 'dark' : 'light';
+    uiTheme.set(theme);
+
+    if (typeof document !== 'undefined') {
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    }
+
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('tps-theme', theme);
+    }
+  }
+
+  function toggleTheme() {
+    applyTheme(theme === 'dark' ? 'light' : 'dark');
+  }
 
   $: filteredItems = searchQuery.trim()
     ? $items.filter((item) => {
@@ -88,6 +108,10 @@
   }
 
   onMount(() => {
+    const storedTheme = localStorage.getItem('tps-theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(storedTheme || (prefersDark ? 'dark' : 'light'));
+
     loadCoreData();
     clockCleanup = startClock();
 
@@ -123,56 +147,87 @@
 
 <div class="relative overflow-hidden">
   <div class="pointer-events-none absolute inset-0">
-    <div class="absolute -top-24 left-[-5rem] h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl"></div>
-    <div class="absolute right-[-4rem] top-28 h-80 w-80 rounded-full bg-fuchsia-500/20 blur-3xl"></div>
-    <div class="absolute bottom-[-5rem] left-1/3 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl"></div>
+    <div class="absolute -left-24 top-8 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(255,127,169,0.26),transparent_70%)] blur-3xl"></div>
+    <div class="absolute right-[-5rem] top-20 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(110,221,247,0.22),transparent_68%)] blur-3xl"></div>
+    <div class="absolute bottom-[-8rem] left-1/3 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(194,157,253,0.16),transparent_66%)] blur-3xl"></div>
   </div>
 
-  <main class="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <header class="hero-panel mb-6 rounded-[28px] border border-white/10 bg-white/8 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
-      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <div class="mb-3 flex flex-wrap items-center gap-2">
-            <span class="rounded-full border border-cyan-400/30 bg-cyan-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
-              TPS + MIS Demo
-            </span>
+  <main class="relative mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-6">
+    <header class="surface hero-panel mb-5 overflow-hidden rounded-[34px] p-5 sm:p-6 lg:p-7">
+      <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.15),transparent_35%,rgba(255,255,255,0.06)_72%)]"></div>
+      <div class="relative flex flex-col gap-5">
+        <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+          <div class="max-w-3xl">
+            <div class="mb-3 flex flex-wrap items-center gap-2">
+              <span class="candy-pill px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+                TPS + MIS Demo
+              </span>
 
-            <span class="rounded-full border border-fuchsia-400/25 bg-fuchsia-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-200">
-              Live Point of Sale
-            </span>
+              <span class="candy-pill px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--accent-3)]">
+                Live Point of Sale
+              </span>
+            </div>
+
+            <h1 class="text-3xl font-black tracking-tight text-[var(--text)] sm:text-4xl lg:text-5xl">NovaMart Checkout Console</h1>
+
           </div>
 
-          <h1 class="text-3xl font-black tracking-tight text-white sm:text-4xl">NovaMart Checkout Console</h1>
-          <p class="text-balance mt-2 max-w-2xl text-sm text-slate-300 sm:text-base">
-            Select products, capture staff sales, submit transactions to Google Sheets, and present a polished TPS interface that actually looks worth showing.
-          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              class="icon-button h-12 w-12"
+              aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              on:click={toggleTheme}
+            >
+              {#if theme === 'dark'}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--accent-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25M12 18.75V21M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M3 12h2.25M18.75 12H21M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59M12 7.5A4.5 4.5 0 1 1 12 16.5 4.5 4.5 0 0 1 12 7.5Z" />
+                </svg>
+              {:else}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 14.25A9 9 0 1 1 9.75 2.25a7.5 7.5 0 0 0 12 12Z" />
+                </svg>
+              {/if}
+            </button>
+
+            <button
+              type="button"
+              class="candy-button-secondary h-12 px-4 text-sm"
+              aria-label="Open admin"
+              on:click={openAdmin}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 11V7a4 4 0 0 1 8 0v4m-8 0h8m-8 0a4 4 0 1 0 8 0m-8 0v6a4 4 0 1 0 8 0v-6" />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:w-[480px]">
-          <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
-            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Date</p>
-            <p class="mt-2 text-sm font-semibold text-white">{ $liveClock.date }</p>
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="surface-soft rounded-[24px] p-4">
+            <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Date</p>
+            <p class="mt-2 text-sm font-semibold text-[var(--text)]">{ $liveClock.date }</p>
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
-            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Time</p>
-            <p class="mt-2 text-sm font-semibold text-white">{ $liveClock.time }</p>
+          <div class="surface-soft rounded-[24px] p-4">
+            <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Time</p>
+            <p class="mt-2 text-sm font-semibold text-[var(--text)]">{ $liveClock.time }</p>
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
-            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Items</p>
-            <p class="mt-2 text-sm font-semibold text-white">{ $items.length }</p>
+          <div class="surface-soft rounded-[24px] p-4">
+            <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Items</p>
+            <p class="mt-2 text-sm font-semibold text-[var(--text)]">{ $items.length }</p>
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
-            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300">Status</p>
-            <p class="mt-2 text-sm font-semibold text-emerald-300">Ready</p>
+          <div class="surface-soft rounded-[24px] p-4">
+            <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Status</p>
+            <p class="mt-2 text-sm font-semibold text-emerald-500">Ready</p>
           </div>
         </div>
       </div>
     </header>
 
-    <div class="mb-6 flex flex-wrap items-center gap-3 rounded-[24px] border border-white/10 bg-white/8 p-2 shadow-xl backdrop-blur-xl">
+    <div class="surface mb-5 flex flex-wrap items-center gap-2 rounded-[28px] p-2">
       <button
         type="button"
-        class={`rounded-2xl px-4 py-3 text-sm font-semibold transition ${activeTab === 'checkout' ? 'bg-cyan-400/15 text-cyan-100 shadow-[0_10px_28px_rgba(34,211,238,0.12)]' : 'text-slate-300 hover:bg-white/5 hover:text-white'}`}
+        class={`candy-tab min-w-[150px] flex-1 ${activeTab === 'checkout' ? 'candy-tab-active' : 'candy-tab-inactive'}`}
         on:click={() => setActiveTab('checkout')}
       >
         Checkout
@@ -180,7 +235,7 @@
 
       <button
         type="button"
-        class={`rounded-2xl px-4 py-3 text-sm font-semibold transition ${activeTab === 'dashboard' ? 'bg-fuchsia-400/15 text-fuchsia-100 shadow-[0_10px_28px_rgba(217,70,239,0.12)]' : 'text-slate-300 hover:bg-white/5 hover:text-white'}`}
+        class={`candy-tab min-w-[150px] flex-1 ${activeTab === 'dashboard' ? 'candy-tab-active' : 'candy-tab-inactive'}`}
         on:click={() => setActiveTab('dashboard')}
       >
         Dashboard
@@ -198,7 +253,7 @@
         cartTotal={basketSummary.total}
       />
 
-      <div class="mb-6">
+      <div class="mb-6 mt-5">
         <DashboardOverview
           dashboard={$dashboardInsights}
           onProductChange={setDashboardProductFilter}
@@ -207,7 +262,7 @@
         />
       </div>
     {:else}
-      <div class="grid gap-6 xl:grid-cols-[1.65fr_0.95fr]">
+      <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(340px,0.95fr)]">
         <CatalogGrid
           items={filteredItems}
           basket={$basket}
@@ -216,7 +271,7 @@
           onAdd={addToBasket}
         />
 
-        <aside class="space-y-6">
+        <aside class="space-y-6 xl:sticky xl:top-6 xl:self-start">
           <CheckoutPanel
             basket={$basket}
             staffList={$staff}
@@ -234,35 +289,22 @@
         </aside>
       </div>
     {/if}
-
-    <div class="mt-6 flex justify-end">
-      <button
-        type="button"
-        class="justify-self-end rounded-full border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10"
-        aria-label="Open admin"
-        on:click={openAdmin}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 11V7a4 4 0 0 1 8 0v4m-8 0h8m-8 0a4 4 0 1 0 8 0m-8 0v6a4 4 0 1 0 8 0v-6" />
-        </svg>
-      </button>
-    </div>
   </main>
 
   {#if $toast.visible}
     <div class="pointer-events-none fixed bottom-5 right-5 z-50 translate-y-0 opacity-100">
-      <div class="rounded-2xl border border-emerald-400/25 bg-slate-950/90 px-5 py-4 shadow-2xl backdrop-blur-xl">
-        <p class="text-sm font-bold text-emerald-300">{$toast.title}</p>
-        <p class="mt-1 text-xs text-slate-300">{$toast.subtitle}</p>
+      <div class="surface-strong rounded-2xl px-5 py-4">
+        <p class="text-sm font-bold text-emerald-500">{$toast.title}</p>
+        <p class="mt-1 text-xs text-[var(--muted)]">{$toast.subtitle}</p>
       </div>
     </div>
   {/if}
 
   {#if $loading}
-    <div class="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm">
-      <div class="flex flex-col items-center gap-4 rounded-3xl border border-white/10 bg-slate-950/90 px-8 py-7 shadow-2xl">
-        <div class="h-14 w-14 animate-spin rounded-full border-4 border-cyan-400/30 border-t-cyan-400"></div>
-        <p class="text-sm font-semibold text-white">{$loadingMessage}</p>
+    <div class="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(35,23,49,0.44)] px-4 backdrop-blur-sm">
+      <div class="surface-strong flex flex-col items-center gap-4 rounded-[32px] px-8 py-7 text-center">
+        <div class="h-14 w-14 animate-spin rounded-full border-4 border-[color-mix(in_srgb,var(--accent)_28%,transparent)] border-t-[var(--accent)]"></div>
+        <p class="text-sm font-semibold text-[var(--text)]">{$loadingMessage}</p>
       </div>
     </div>
   {/if}

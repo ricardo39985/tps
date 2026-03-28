@@ -4,11 +4,11 @@
   export let chart = { data: { labels: [], datasets: [] }, options: {} };
 </script>
 
-<section class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
+<section class="surface-strong rounded-[24px] p-4">
   <div class="mb-4">
-    <p class="text-xs uppercase tracking-[0.22em] text-fuchsia-200">Products</p>
-    <h3 class="mt-1 text-xl font-black text-white">Top products</h3>
-    <p class="mt-1 text-sm text-slate-300">Highest-revenue products in the current scope.</p>
+    <p class="text-xs uppercase tracking-[0.22em] text-[var(--accent-3)]">Products</p>
+    <h3 class="mt-1 text-xl font-black text-[var(--text)]">Top products</h3>
+    <p class="mt-1 text-sm text-[var(--muted)]">Highest-revenue products in the current scope.</p>
   </div>
 
   <ChartCanvas type="bar" data={chart.data} options={chart.options} ariaLabel="Product performance chart" height={320} />

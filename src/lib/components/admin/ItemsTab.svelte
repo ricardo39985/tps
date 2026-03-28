@@ -35,39 +35,39 @@
 
 <section>
   <div class="grid gap-6 lg:grid-cols-[360px_1fr]">
-    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <h3 class="text-lg font-black">Add Item</h3>
+    <div class="surface-soft rounded-2xl p-4">
+      <h3 class="text-lg font-black text-[var(--text)]">Add Item</h3>
       <div class="mt-4 space-y-3">
-        <div class="rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3">
-          <p class="text-xs uppercase tracking-[0.18em] text-cyan-200">Item code</p>
-          <p class="mt-1 text-sm font-semibold text-white">{nextItemCode}</p>
+        <div class="surface-inner rounded-xl px-4 py-3">
+          <p class="text-xs uppercase tracking-[0.18em] text-[var(--accent)]">Item code</p>
+          <p class="mt-1 text-sm font-semibold text-[var(--text)]">{nextItemCode}</p>
         </div>
-        <input bind:value={itemName} type="text" placeholder="Item name" class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none" />
-        <input bind:value={description} type="text" placeholder="Description" class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none" />
-        <input bind:value={itemPrice} type="number" step="0.01" placeholder="Unit price" class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white outline-none" />
-        <button type="button" class="w-full rounded-xl bg-cyan-400 px-4 py-3 font-black text-slate-950" on:click={add}>Add Item</button>
+        <input bind:value={itemName} type="text" placeholder="Item name" class="candy-input" />
+        <input bind:value={description} type="text" placeholder="Description" class="candy-input" />
+        <input bind:value={itemPrice} type="number" step="0.01" placeholder="Unit price" class="candy-input" />
+        <button type="button" class="candy-button-primary w-full px-4 py-3" on:click={add}>Add Item</button>
       </div>
     </div>
 
-    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+    <div class="surface-soft rounded-2xl p-4">
       <div class="mb-4 flex items-center justify-between">
-        <h3 class="text-lg font-black">Items</h3>
-        <p class="text-sm text-slate-300">{items.length} items</p>
+        <h3 class="text-lg font-black text-[var(--text)]">Items</h3>
+        <p class="text-sm text-[var(--muted)]">{items.length} items</p>
       </div>
 
       {#if !items.length}
-        <div class="rounded-xl border border-white/10 bg-slate-950/30 p-4 text-sm text-slate-300">No items found.</div>
+        <div class="surface-inner rounded-xl p-4 text-sm text-[var(--muted)]">No items found.</div>
       {:else}
         <div class="space-y-2">
           {#each items as item (item._rowNumber)}
-            <div class="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-slate-950/30 px-4 py-3">
+            <div class="surface-inner flex items-center justify-between gap-3 rounded-xl px-4 py-3">
               <div class="min-w-0">
-                <p class="text-sm font-bold text-white">{item.item_name}</p>
-                <p class="text-xs text-slate-400">{item.item_code} • {formatCurrency(item.unit_price)}</p>
+                <p class="text-sm font-bold text-[var(--text)]">{item.item_name}</p>
+                <p class="text-xs text-[var(--muted)]">{item.item_code} • {formatCurrency(item.unit_price)}</p>
               </div>
               <button
                 type="button"
-                class="rounded-lg border border-rose-400/20 bg-rose-400/10 px-3 py-2 text-xs font-semibold text-rose-300"
+                class="rounded-xl border border-rose-300/30 bg-rose-100/75 px-3 py-2 text-xs font-semibold text-rose-500"
                 on:click={() => onDeleteItem(item._rowNumber)}
               >
                 Delete

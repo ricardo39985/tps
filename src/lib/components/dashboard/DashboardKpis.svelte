@@ -12,39 +12,39 @@
 </script>
 
 <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-  <article class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
-    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Revenue</p>
-    <p class="mt-2 text-3xl font-black text-white">{formatCurrency(metrics.revenue)}</p>
-    <p class="mt-1 text-sm text-slate-300">Filtered sales value</p>
+  <article class="surface-soft rounded-[24px] p-4">
+    <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Revenue</p>
+    <p class="mt-2 text-3xl font-black text-[var(--text)]">{formatCurrency(metrics.revenue)}</p>
+    <p class="mt-1 text-sm text-[var(--muted)]">Filtered sales value</p>
   </article>
 
-  <article class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
-    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Transactions</p>
-    <p class="mt-2 text-3xl font-black text-white">{metrics.transactions}</p>
-    <p class="mt-1 text-sm text-slate-300">Orders in the selected scope</p>
+  <article class="surface-soft rounded-[24px] p-4">
+    <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Transactions</p>
+    <p class="mt-2 text-3xl font-black text-[var(--text)]">{metrics.transactions}</p>
+    <p class="mt-1 text-sm text-[var(--muted)]">Orders in the selected scope</p>
   </article>
 
-  <article class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
-    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Units Sold</p>
-    <p class="mt-2 text-3xl font-black text-white">{metrics.unitsSold}</p>
-    <p class="mt-1 text-sm text-slate-300">Total quantity across transactions</p>
+  <article class="surface-soft rounded-[24px] p-4">
+    <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Units Sold</p>
+    <p class="mt-2 text-3xl font-black text-[var(--text)]">{metrics.unitsSold}</p>
+    <p class="mt-1 text-sm text-[var(--muted)]">Total quantity across transactions</p>
   </article>
 
-  <article class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
-    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Average Order</p>
-    <p class="mt-2 text-3xl font-black text-white">{formatCurrency(metrics.averageOrderValue)}</p>
-    <p class="mt-1 text-sm text-slate-300">Revenue divided by transactions</p>
+  <article class="surface-soft rounded-[24px] p-4">
+    <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Average Order</p>
+    <p class="mt-2 text-3xl font-black text-[var(--text)]">{formatCurrency(metrics.averageOrderValue)}</p>
+    <p class="mt-1 text-sm text-[var(--muted)]">Revenue divided by transactions</p>
   </article>
 
-  <article class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
-    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Active Products</p>
-    <p class="mt-2 text-3xl font-black text-white">{metrics.activeProducts}</p>
-    <p class="mt-1 text-sm text-slate-300">Products with matching sales</p>
+  <article class="surface-soft rounded-[24px] p-4">
+    <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Active Products</p>
+    <p class="mt-2 text-3xl font-black text-[var(--text)]">{metrics.activeProducts}</p>
+    <p class="mt-1 text-sm text-[var(--muted)]">Products with matching sales</p>
   </article>
 
-  <article class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
-    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Active Staff</p>
-    <p class="mt-2 text-3xl font-black text-white">{metrics.activeStaff}</p>
-    <p class="mt-1 text-sm text-slate-300">Staff members with matching sales</p>
+  <article class="surface-soft rounded-[24px] p-4">
+    <p class="text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">Active Staff</p>
+    <p class="mt-2 text-3xl font-black text-[var(--text)]">{metrics.activeStaff}</p>
+    <p class="mt-1 text-sm text-[var(--muted)]">Staff members with matching sales</p>
   </article>
 </section>

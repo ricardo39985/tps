@@ -4,11 +4,11 @@
   export let chart = { data: { labels: [], datasets: [] }, options: {} };
 </script>
 
-<section class="rounded-[24px] border border-white/10 bg-white/8 p-4 shadow-xl backdrop-blur-xl">
+<section class="surface-strong rounded-[24px] p-4">
   <div class="mb-4">
-    <p class="text-xs uppercase tracking-[0.22em] text-cyan-200">Trend</p>
-    <h3 class="mt-1 text-xl font-black text-white">Revenue over time</h3>
-    <p class="mt-1 text-sm text-slate-300">Daily revenue for the selected filter scope.</p>
+    <p class="text-xs uppercase tracking-[0.22em] text-[var(--accent)]">Trend</p>
+    <h3 class="mt-1 text-xl font-black text-[var(--text)]">Revenue over time</h3>
+    <p class="mt-1 text-sm text-[var(--muted)]">Daily revenue for the selected filter scope.</p>
   </div>
 
   <ChartCanvas type="line" data={chart.data} options={chart.options} ariaLabel="Revenue trend chart" height={320} />
