@@ -1,0 +1,6 @@
+/* Legacy reference stylesheet kept for parity checks.
+   The rebuilt app uses /src/app.css for runtime styling. */
+
+:root {
+  color-scheme: dark;
+}
