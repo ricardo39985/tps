@@ -3,7 +3,9 @@
   import CatalogGrid from './lib/components/CatalogGrid.svelte';
   import CheckoutPanel from './lib/components/CheckoutPanel.svelte';
   import DashboardSummary from './lib/components/DashboardSummary.svelte';
+  import DashboardOverview from './lib/components/dashboard/DashboardOverview.svelte';
   import AdminModal from './lib/components/admin/AdminModal.svelte';
+  import FakerTab from './lib/components/admin/FakerTab.svelte';
   import ItemsTab from './lib/components/admin/ItemsTab.svelte';
   import StaffTab from './lib/components/admin/StaffTab.svelte';
   import TransactionsTab from './lib/components/admin/TransactionsTab.svelte';
@@ -34,6 +36,7 @@
     setAdminTab,
     setSelectedStaff,
     staff,
+    generateFakeTransactions,
     startClock,
     status,
     submitSale,
@@ -42,8 +45,15 @@
     updateBasketQuantity,
     searchAdminTransactions
   } from './lib/state/app-state.js';
+  import {
+    clearDashboardFilters,
+    dashboardInsights,
+    setDashboardProductFilter,
+    setDashboardStaffFilter
+  } from './lib/state/dashboard-state.js';
 
   let searchQuery = '';
+  let activeTab = 'checkout';
   let clockCleanup = null;
 
   $: filteredItems = searchQuery.trim()
@@ -66,6 +76,10 @@
 
   function handleSearch(value) {
     searchQuery = value;
+  }
+
+  function setActiveTab(tab) {
+    activeTab = tab;
   }
 
   async function handleSubmit(event) {
@@ -155,42 +169,71 @@
       </div>
     </header>
 
-    <DashboardSummary
-      dashboard={$dashboard}
-      liveDate={$liveClock.date}
-      liveTime={$liveClock.time}
-      itemsCount={$items.length}
-      firstItem={firstItem}
-      cartItemCount={basketSummary.itemCount}
-      cartTotal={basketSummary.total}
-    />
+    <div class="mb-6 flex flex-wrap items-center gap-3 rounded-[24px] border border-white/10 bg-white/8 p-2 shadow-xl backdrop-blur-xl">
+      <button
+        type="button"
+        class={`rounded-2xl px-4 py-3 text-sm font-semibold transition ${activeTab === 'checkout' ? 'bg-cyan-400/15 text-cyan-100 shadow-[0_10px_28px_rgba(34,211,238,0.12)]' : 'text-slate-300 hover:bg-white/5 hover:text-white'}`}
+        on:click={() => setActiveTab('checkout')}
+      >
+        Checkout
+      </button>
 
-    <div class="grid gap-6 xl:grid-cols-[1.65fr_0.95fr]">
-      <CatalogGrid
-        items={filteredItems}
-        basket={$basket}
-        query={searchQuery}
-        onSearch={handleSearch}
-        onAdd={addToBasket}
+      <button
+        type="button"
+        class={`rounded-2xl px-4 py-3 text-sm font-semibold transition ${activeTab === 'dashboard' ? 'bg-fuchsia-400/15 text-fuchsia-100 shadow-[0_10px_28px_rgba(217,70,239,0.12)]' : 'text-slate-300 hover:bg-white/5 hover:text-white'}`}
+        on:click={() => setActiveTab('dashboard')}
+      >
+        Dashboard
+      </button>
+    </div>
+
+    {#if activeTab === 'dashboard'}
+      <DashboardSummary
+        dashboard={$dashboard}
+        liveDate={$liveClock.date}
+        liveTime={$liveClock.time}
+        itemsCount={$items.length}
+        firstItem={firstItem}
+        cartItemCount={basketSummary.itemCount}
+        cartTotal={basketSummary.total}
       />
 
-      <aside class="space-y-6">
-        <CheckoutPanel
-          basket={$basket}
-          staffList={$staff}
-          selectedStaff={$selectedStaff}
-          total={$basketTotal}
-          totalQuantity={$basketItemCount}
-          statusMessage={$status.message}
-          statusTone={$status.tone}
-          onStaffChange={setSelectedStaff}
-          onSubmit={handleSubmit}
-          onIncrease={(itemCode) => updateBasketQuantity(itemCode, 1)}
-          onDecrease={(itemCode) => updateBasketQuantity(itemCode, -1)}
-          onRemove={removeFromBasket}
+      <div class="mb-6">
+        <DashboardOverview
+          dashboard={$dashboardInsights}
+          onProductChange={setDashboardProductFilter}
+          onStaffChange={setDashboardStaffFilter}
+          onClearFilters={clearDashboardFilters}
         />
-      </aside>
-    </div>
+      </div>
+    {:else}
+      <div class="grid gap-6 xl:grid-cols-[1.65fr_0.95fr]">
+        <CatalogGrid
+          items={filteredItems}
+          basket={$basket}
+          query={searchQuery}
+          onSearch={handleSearch}
+          onAdd={addToBasket}
+        />
+
+        <aside class="space-y-6">
+          <CheckoutPanel
+            basket={$basket}
+            staffList={$staff}
+            selectedStaff={$selectedStaff}
+            total={$basketTotal}
+            totalQuantity={$basketItemCount}
+            statusMessage={$status.message}
+            statusTone={$status.tone}
+            onStaffChange={setSelectedStaff}
+            onSubmit={handleSubmit}
+            onIncrease={(itemCode) => updateBasketQuantity(itemCode, 1)}
+            onDecrease={(itemCode) => updateBasketQuantity(itemCode, -1)}
+            onRemove={removeFromBasket}
+          />
+        </aside>
+      </div>
+    {/if}
 
     <div class="mt-6 flex justify-end">
       <button
@@ -237,10 +280,7 @@
         onDeleteTransaction={deleteTransaction}
       />
     {:else}
-      <div class="rounded-2xl border border-dashed border-white/10 bg-white/5 p-6 text-center">
-        <h3 class="text-lg font-black">Faker Tools</h3>
-        <p class="mt-2 text-sm text-slate-300">We’ll wire fake items and fake transactions here next.</p>
-      </div>
+      <FakerTab items={$items} staff={$staff} onGenerate={generateFakeTransactions} />
     {/if}
   </AdminModal>
 </div>

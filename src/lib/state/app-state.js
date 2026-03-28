@@ -1,6 +1,6 @@
 import { derived, get, writable } from 'svelte/store';
 import { formatCurrency } from '../utils/format.js';
-import { generateTransactionId, getCurrentDateISO, getCurrentTime, getLiveDateLabel, getLiveTimeLabel } from '../utils/time.js';
+import { formatDateISO, generateTransactionId, getCurrentDateISO, getCurrentTime, getDateISOYearsAgo, getLiveDateLabel, getLiveTimeLabel } from '../utils/time.js';
 import {
   getDashboardSummary,
   getItems,
@@ -180,6 +180,34 @@ export function addToBasket(itemCode) {
   });
 }
 
+function pad2(value) {
+  return String(value).padStart(2, '0');
+}
+
+function parseDateISO(dateString) {
+  const [year, month, day] = String(dateString || '').split('-').map((part) => Number(part));
+  return new Date(year, (month || 1) - 1, day || 1);
+}
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomDateISO(startISO, endISO) {
+  const start = parseDateISO(startISO);
+  const end = parseDateISO(endISO);
+  const span = Math.max(end.getTime() - start.getTime(), 0);
+  const randomOffset = Math.floor(Math.random() * (span + 1));
+  return formatDateISO(new Date(start.getTime() + randomOffset));
+}
+
+function randomTime24() {
+  const hour = randomInt(8, 20);
+  const minute = randomInt(0, 59);
+  const second = randomInt(0, 59);
+  return `${pad2(hour)}:${pad2(minute)}:${pad2(second)}`;
+}
+
 export function updateBasketQuantity(itemCode, delta) {
   basket.update((currentBasket) => {
     const nextBasket = currentBasket
@@ -208,6 +236,104 @@ export function setSelectedStaff(name) {
 
 export function formatBasketTotalForStatus() {
   return formatCurrency(get(basketTotal));
+}
+
+export async function generateFakeTransactions({ staffScope = 'all', count, startDate, endDate } = {}) {
+  const requestedCount = Number(count);
+  const currentItems = get(items);
+  const currentStaff = get(staff);
+  const today = getCurrentDateISO();
+  const minStartDate = getDateISOYearsAgo(10);
+
+  if (!Number.isInteger(requestedCount) || requestedCount <= 0) {
+    setStatus('Fake generator: enter a positive whole number of transactions.', 'error');
+    return { ok: false };
+  }
+
+  if (!startDate || !endDate) {
+    setStatus('Fake generator: choose both a start date and an end date.', 'error');
+    return { ok: false };
+  }
+
+  if (endDate > today) {
+    setStatus('Fake generator: the end date cannot be later than today.', 'error');
+    return { ok: false };
+  }
+
+  if (startDate < minStartDate) {
+    setStatus('Fake generator: the start date must be within the last 10 years.', 'error');
+    return { ok: false };
+  }
+
+  if (startDate > endDate) {
+    setStatus('Fake generator: the start date cannot be later than the end date.', 'error');
+    return { ok: false };
+  }
+
+  if (!currentItems.length) {
+    setStatus('Fake generator: add at least one item before generating transactions.', 'error');
+    return { ok: false };
+  }
+
+  if (!currentStaff.length) {
+    setStatus('Fake generator: add at least one staff member before generating transactions.', 'error');
+    return { ok: false };
+  }
+
+  const staffPool = staffScope === 'all'
+    ? currentStaff
+    : currentStaff.filter((member) => member.name === staffScope);
+
+  if (!staffPool.length) {
+    setStatus('Fake generator: selected staff member is not available.', 'error');
+    return { ok: false };
+  }
+
+  const transactionsToInsert = Array.from({ length: requestedCount }, (_, index) => {
+    const item = currentItems[randomInt(0, currentItems.length - 1)];
+    const staffMember = staffScope === 'all'
+      ? staffPool[randomInt(0, staffPool.length - 1)]
+      : staffPool[0];
+    const quantity = randomInt(1, 5);
+    const unitPrice = Number(item.unit_price || 0);
+    const totalPrice = unitPrice * quantity;
+
+    return {
+      transaction_id: `FAKE-${Date.now()}-${index + 1}-${randomInt(1000, 9999)}`,
+      date: randomDateISO(startDate, endDate),
+      time: randomTime24(),
+      staff_name: staffMember.name,
+      item_code: item.item_code,
+      item_name: item.item_name,
+      description: item.description,
+      unit_price: unitPrice.toFixed(2),
+      quantity,
+      total_price: totalPrice.toFixed(2)
+    };
+  });
+
+  setLoading(true);
+  setLoadingMessage('Generating fake transactions...');
+
+  try {
+    setStatus('Writing fake transactions to Google Sheets...', 'neutral');
+
+    await postAction({
+      action: 'createTransactionBatch',
+      transactions: transactionsToInsert
+    });
+
+    await loadCoreData();
+    setStatus(`Generated ${requestedCount} fake transactions.`, 'success');
+    showToast('Fake data generated', `Added ${requestedCount} transaction${requestedCount === 1 ? '' : 's'}.`);
+    return { ok: true, inserted: requestedCount };
+  } catch (error) {
+    setStatus(`Fake generation failed: ${error.message}`, 'error');
+    return { ok: false };
+  } finally {
+    setLoading(false);
+    setLoadingMessage('Loading data...');
+  }
 }
 
 export async function submitSale() {
