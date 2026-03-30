@@ -251,7 +251,7 @@ function renderAdminTransactions(list = transactions) {
       <div class="min-w-0">
         <p class="truncate text-sm font-bold text-white">${txn.item_name} • ${formatCurrency(txn.total_price)}</p>
         <p class="truncate text-xs text-slate-400">
-          ${txn.transaction_id} • ${txn.date} ${txn.time} • ${txn.staff_name} • qty ${txn.quantity}
+          ${txn.transaction_id} • ${formatDate(txn.date)} ${formatTime(txn.time)} • ${txn.staff_name} • qty ${txn.quantity}
         </p>
       </div>
       <button
@@ -367,6 +367,28 @@ async function loadTransactions() {
 }
 function formatCurrency(value) {
     return `$${Number(value || 0).toFixed(2)}`;
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
+}
+
+function formatTime(timeString) {
+    if (timeString.includes('T')) {
+        // Handle datetime strings like "1899-12-30T15:22"
+        const timePart = timeString.split('T')[1];
+        const [hours, minutes] = timePart.split(':');
+        return `${hours}:${minutes}`;
+    } else {
+        // Handle time strings like "15:22" or "15:22:00"
+        const [hours, minutes] = timeString.split(':');
+        return `${hours}:${minutes}`;
+    }
 }
 
 function generateTransactionId() {

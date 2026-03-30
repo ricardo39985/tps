@@ -1,5 +1,6 @@
 <script>
   import { formatCurrency } from '../../utils/format.js';
+  import { getLiveDateLabel, formatTime } from '../../utils/time.js';
 
   export let transactions = [];
   export let staff = [];
@@ -109,7 +110,7 @@
               <div class="min-w-0">
                 <p class="truncate text-sm font-bold text-[var(--text)]">{txn.item_name} • {formatCurrency(txn.total_price)}</p>
                 <p class="truncate text-xs text-[var(--muted)]">
-                  {txn.transaction_id} • {txn.date} {txn.time} • {txn.staff_name} • qty {txn.quantity}
+                  {txn.transaction_id} • {getLiveDateLabel(new Date(txn.date))} {formatTime(txn.time)} • {txn.staff_name} • qty {txn.quantity}
                 </p>
               </div>
             </div>

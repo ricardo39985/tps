@@ -39,3 +39,16 @@ export function getLiveTimeLabel(date = new Date()) {
     second: '2-digit'
   });
 }
+
+export function formatTime(timeString) {
+  if (timeString.includes('T')) {
+    // Handle datetime strings like "1899-12-30T15:22"
+    const timePart = timeString.split('T')[1];
+    const [hours, minutes] = timePart.split(':');
+    return `${hours}:${minutes}`;
+  } else {
+    // Handle time strings like "15:22" or "15:22:00"
+    const [hours, minutes] = timeString.split(':');
+    return `${hours}:${minutes}`;
+  }
+}
