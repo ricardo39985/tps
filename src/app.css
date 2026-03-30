@@ -226,6 +226,27 @@ body::before {
   color: var(--text);
 }
 
+.admin-tab {
+  display: inline-flex;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.8rem 0.95rem;
+  white-space: nowrap;
+}
+
+.admin-tab-active {
+  justify-content: flex-start;
+  padding-inline: 1rem 1.15rem;
+}
+
+.admin-tab-inactive {
+  padding-inline: 0.85rem;
+}
+
 .icon-button {
   display: inline-flex;
   align-items: center;

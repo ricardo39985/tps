@@ -312,7 +312,7 @@ export async function generateFakeTransactions({ allUsers = true, staffNames = [
     const totalPrice = unitPrice * quantity;
 
     return {
-      transaction_id: `FAKE-${Date.now()}-${index + 1}-${randomInt(1000, 9999)}`,
+      transaction_id: `TXN-${Date.now()}-${index + 1}-${randomInt(1000, 9999)}`,
       date: randomDateISO(startDate, endDate),
       time: randomTime24(),
       staff_name: staffMember.name,
@@ -546,6 +546,50 @@ export async function deleteTransaction(rowNumber) {
     return { ok: true };
   } catch (error) {
     setStatus(`Delete transaction failed: ${error.message}`, 'error');
+    return { ok: false };
+  } finally {
+    setLoading(false);
+    setLoadingMessage('Loading data...');
+  }
+}
+
+export async function deleteTransactions(rowNumbers = []) {
+  const normalizedRows = [...new Set(
+    (Array.isArray(rowNumbers) ? rowNumbers : [])
+      .map((rowNumber) => Number(rowNumber))
+      .filter(Boolean)
+  )];
+
+  if (!normalizedRows.length) {
+    setStatus('Delete failed: no transactions selected.', 'error');
+    return { ok: false };
+  }
+
+  setLoading(true);
+  setLoadingMessage(normalizedRows.length === 1 ? 'Deleting transaction...' : `Deleting ${normalizedRows.length} transactions...`);
+
+  try {
+    await Promise.all(
+      normalizedRows.map((rowNumber) =>
+        postAction({
+          action: 'deleteTransaction',
+          rowNumber
+        })
+      )
+    );
+
+    await loadCoreData();
+    setStatus(
+      normalizedRows.length === 1 ? 'Transaction deleted.' : `${normalizedRows.length} transactions deleted.`,
+      'success'
+    );
+    showToast(
+      normalizedRows.length === 1 ? 'Transaction deleted' : 'Transactions deleted',
+      normalizedRows.length === 1 ? 'Removed 1 transaction.' : `Removed ${normalizedRows.length} transactions.`
+    );
+    return { ok: true };
+  } catch (error) {
+    setStatus(`Delete transactions failed: ${error.message}`, 'error');
     return { ok: false };
   } finally {
     setLoading(false);

@@ -25,6 +25,7 @@
     deleteItem,
     deleteStaffMember,
     deleteTransaction,
+    deleteTransactions,
     items,
     loadCoreData,
     loading,
@@ -320,6 +321,7 @@
         staff={$staff}
         onSearch={searchAdminTransactions}
         onDeleteTransaction={deleteTransaction}
+        onDeleteTransactions={deleteTransactions}
       />
     {:else}
       <FakerTab items={$items} staff={$staff} onGenerate={generateFakeTransactions} />
